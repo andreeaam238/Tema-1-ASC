@@ -1,4 +1,4 @@
-version=1.0.1
+version=1.1.0
 registry=gitlab.cs.pub.ro:5050/asc/asc-public
 img_name=c-labs
 tag_name=${registry}/${img_name}:${version}

@@ -21,6 +21,8 @@ RUN apt-get install -y kcachegrind
 
 RUN apt-get install -y dbus-x11
 
+RUN apt-get install -y libatlas-base-dev liblapack-dev libblas-dev
+
 #ENV DISPLAY=host.docker.internal:0.0
 
 WORKDIR /asc
