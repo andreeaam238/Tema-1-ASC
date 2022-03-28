@@ -1,4 +1,4 @@
-version=1.1.0
+version=1.2.0
 registry=gitlab.cs.pub.ro:5050/asc/asc-public
 img_name=c-labs
 tag_name=${registry}/${img_name}:${version}
@@ -17,6 +17,7 @@ bash:
 	docker exec -it ${img_name} /bin/bash
 
 push:
+	docker login
 	docker push ${tag_name}
 
 clean:

@@ -23,6 +23,8 @@ RUN apt-get install -y dbus-x11
 
 RUN apt-get install -y libatlas-base-dev liblapack-dev libblas-dev
 
+RUN apt-get update && apt-get install -y gnuplot
+
 #ENV DISPLAY=host.docker.internal:0.0
 
 WORKDIR /asc
