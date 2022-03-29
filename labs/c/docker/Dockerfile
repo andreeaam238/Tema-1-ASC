@@ -1,4 +1,5 @@
-FROM ubuntu:20.04
+FROM tgagor/centos:stream8
+#FROM centos:centos7
 
 LABEL maintainer="eduard.staniloiu@upb.ro" \
       name="ASC Grid Docker Image" \
@@ -8,31 +9,39 @@ ENV DEBIAN_FRONTEND="noninteractive"
 
 ENV TZ=Europe/Bucharest
 
+RUN yum install -y epel-release
 
-RUN apt-get update
+RUN yum install -y dnf-plugins-core
 
-RUN apt-get install -y build-essential
+# Uncomment for CentOS7
+#RUN yum-config-manager --enable repository powertools
 
-RUN apt-get install -y gcc
+# Uncomment for CentOS8
+RUN yum config-manager --set-enabled powertools
 
-RUN apt-get install -y valgrind
+RUN yum install -y gcc gcc-c++ kernel-devel make
 
-RUN apt-get install -y kcachegrind
+RUN yum install -y valgrind
 
-RUN apt-get install -y dbus-x11
+RUN yum install -y kcachegrind
 
-RUN apt-get install -y libatlas-base-dev liblapack-dev libblas-dev
+RUN yum install -y graphviz
 
-RUN apt-get update && apt-get install -y gnuplot
+RUN yum install -y dbus-x11
 
-#ENV DISPLAY=host.docker.internal:0.0
+RUN yum install -y blas blas-devel atlas atlas-devel lapack-devel
+
+RUN yum install -y gnuplot
+
+RUN yum install -y wget
+
+#RUN wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm
+
+#RUN rpm -ivh jdk-18_linux-x64_bin.rpm
 
 WORKDIR /asc
 
 RUN mkdir kcachegrind-dbus
-
-#ENV XDG_RUNTIME_DIR=/asc/kcachegrind-dbus
-#RUN export $(dbus-launch)
 
 COPY ./startup.sh /asc/
 
