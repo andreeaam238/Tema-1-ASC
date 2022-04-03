@@ -35,6 +35,8 @@ RUN yum install -y gnuplot
 
 RUN yum install -y wget
 
+RUN yum install -y vim
+
 #RUN wget https://download.oracle.com/java/18/latest/jdk-18_linux-x64_bin.rpm
 
 #RUN rpm -ivh jdk-18_linux-x64_bin.rpm
