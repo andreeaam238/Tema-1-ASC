@@ -3,7 +3,7 @@
 SRC=tema
 TESTS=tests
 OUT=out
-PYTHON_CMD=python3
+PYTHON_CMD=/c/Python310/python
 
 for i in {1..8}
 do

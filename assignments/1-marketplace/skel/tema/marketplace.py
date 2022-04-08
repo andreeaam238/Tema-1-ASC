@@ -5,6 +5,7 @@ Computer Systems Architecture Course
 Assignment 1
 March 2021
 """
+from threading import Lock
 
 
 class Marketplace:
@@ -12,6 +13,7 @@ class Marketplace:
     Class that represents the Marketplace. It's the central part of the implementation.
     The producers and consumers use its methods concurrently.
     """
+
     def __init__(self, queue_size_per_producer):
         """
         Constructor
@@ -20,13 +22,20 @@ class Marketplace:
         :param queue_size_per_producer: the maximum size of a queue associated with each producer
         """
         self.queue_size_per_producer = queue_size_per_producer
-
+        self.producers = []
+        self.consumers = []
+        self.register_lock = Lock()
+        self.cart_lock = Lock()
 
     def register_producer(self):
         """
         Returns an id for the producer that calls this.
         """
-        pass
+        with self.register_lock:
+            producer_id = len(self.producers)
+            self.producers.append([])
+
+        return producer_id
 
     def publish(self, producer_id, product):
         """
@@ -48,7 +57,11 @@ class Marketplace:
 
         :returns an int representing the cart_id
         """
-        pass
+        with self.cart_lock:
+            cart_id = len(self.consumers)
+            self.consumers.append([])
+
+        return cart_id
 
     def add_to_cart(self, cart_id, product):
         """
