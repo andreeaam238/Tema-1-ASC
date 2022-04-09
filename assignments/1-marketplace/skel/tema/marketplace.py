@@ -5,7 +5,7 @@ Computer Systems Architecture Course
 Assignment 1
 March 2021
 """
-from threading import Lock
+from threading import Lock, currentThread
 
 
 class Marketplace:
@@ -24,16 +24,18 @@ class Marketplace:
         self.queue_size_per_producer = queue_size_per_producer
         self.producers = []
         self.consumers = []
-        self.register_lock = Lock()
-        self.cart_lock = Lock()
+        self.products = {}
+        self.producer_lock = Lock()
+        self.consumer_lock = Lock()
+        self.product_lock = Lock()
 
     def register_producer(self):
         """
         Returns an id for the producer that calls this.
         """
-        with self.register_lock:
+        with self.producer_lock:
             producer_id = len(self.producers)
-            self.producers.append([])
+            self.producers.append({})
 
         return producer_id
 
@@ -49,7 +51,17 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again.
         """
-        pass
+        if sum(self.producers[producer_id].values()) == self.queue_size_per_producer:
+            return False
+
+        if product not in self.producers[producer_id]:
+            self.producers[producer_id][product] = 1
+            self.products[product] = producer_id
+        else:
+            with self.product_lock:
+                self.producers[producer_id][product] += 1
+
+        return True
 
     def new_cart(self):
         """
@@ -57,7 +69,7 @@ class Marketplace:
 
         :returns an int representing the cart_id
         """
-        with self.cart_lock:
+        with self.consumer_lock:
             cart_id = len(self.consumers)
             self.consumers.append([])
 
@@ -75,7 +87,14 @@ class Marketplace:
 
         :returns True or False. If the caller receives False, it should wait and then try again
         """
-        pass
+        with self.product_lock:
+            for producer in self.producers:
+                if product in producer.keys() and producer[product] > 0:
+                    self.consumers[cart_id].append(product)
+                    self.producers[self.producers.index(producer)][product] -= 1
+                    return True
+
+        return False
 
     def remove_from_cart(self, cart_id, product):
         """
@@ -87,7 +106,10 @@ class Marketplace:
         :type product: Product
         :param product: the product to remove from cart
         """
-        pass
+        with self.product_lock:
+            if product in self.consumers[cart_id]:
+                self.consumers[cart_id].remove(product)
+                self.producers[self.products[product]][product] += 1
 
     def place_order(self, cart_id):
         """
@@ -96,4 +118,12 @@ class Marketplace:
         :type cart_id: Int
         :param cart_id: id cart
         """
-        pass
+        order = []
+
+        for product in self.consumers[cart_id]:
+            order.append(product)
+            print(currentThread().getName() + " bought " + str(product))
+
+        self.consumers[cart_id] = []
+
+        return order

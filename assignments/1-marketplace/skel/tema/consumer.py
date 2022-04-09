@@ -5,7 +5,7 @@ Computer Systems Architecture Course
 Assignment 1
 March 2021
 """
-
+import time
 from threading import Thread
 
 
@@ -36,7 +36,21 @@ class Consumer(Thread):
         self.carts = carts
         self.marketplace = marketplace
         self.retry_wait_time = retry_wait_time
-        self.kwargs = kwargs
 
     def run(self):
-        pass
+        for cart in self.carts:
+            cart_id = self.marketplace.new_cart()
+
+            for operation in cart:
+                operation_type = operation['type']
+                quantity = operation['quantity']
+                product = operation['product']
+
+                for i in range(quantity):
+                    if operation_type == 'add':
+                        while not self.marketplace.add_to_cart(cart_id, product):
+                            time.sleep(self.retry_wait_time)
+                    elif operation_type == 'remove':
+                        self.marketplace.remove_from_cart(cart_id, product)
+
+            self.marketplace.place_order(cart_id)

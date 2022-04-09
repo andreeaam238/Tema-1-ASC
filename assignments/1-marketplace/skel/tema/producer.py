@@ -5,7 +5,7 @@ Computer Systems Architecture Course
 Assignment 1
 March 2021
 """
-
+import time
 from threading import Thread
 
 
@@ -36,7 +36,15 @@ class Producer(Thread):
         self.products = products
         self.marketplace = marketplace
         self.republish_wait_time = republish_wait_time
-        self.kwargs = kwargs
+        self.id = self.marketplace.register_producer()
 
     def run(self):
-        pass
+        while True:
+            for product in self.products:
+                quantity = product[1]
+
+                for i in range(quantity):
+                    while not self.marketplace.publish(self.id, product[0]):
+                        time.sleep(self.republish_wait_time)
+
+                    time.sleep(product[2])
