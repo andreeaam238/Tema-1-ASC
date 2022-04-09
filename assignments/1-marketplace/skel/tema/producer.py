@@ -36,15 +36,15 @@ class Producer(Thread):
         self.products = products
         self.marketplace = marketplace
         self.republish_wait_time = republish_wait_time
-        self.id = self.marketplace.register_producer()
+        self.identifier = self.marketplace.register_producer()
 
     def run(self):
         while True:
             for product in self.products:
                 quantity = product[1]
 
-                for i in range(quantity):
-                    while not self.marketplace.publish(self.id, product[0]):
+                for _ in range(quantity):
+                    while not self.marketplace.publish(self.identifier, product[0]):
                         time.sleep(self.republish_wait_time)
 
                     time.sleep(product[2])

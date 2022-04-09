@@ -52,9 +52,8 @@ class Marketplace:
 
         with self.product_lock:
             self.producers[producer_id] += 1
-
-        self.product_producer_mapping[product] = producer_id
-        self.available_products.append(product)
+            self.product_producer_mapping[product] = producer_id
+            self.available_products.append(product)
 
         return True
 
