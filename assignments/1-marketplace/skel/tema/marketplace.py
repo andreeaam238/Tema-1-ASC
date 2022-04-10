@@ -4,11 +4,10 @@ Computer Systems Architecture Course
 Assignment 1
 March 2021
 """
-import time
-from collections import deque
-from threading import Lock, currentThread
 import logging
+import time
 from logging.handlers import RotatingFileHandler
+from threading import Lock, currentThread
 
 
 class Marketplace:
@@ -24,10 +23,9 @@ class Marketplace:
         :param queue_size_per_producer: the maximum size of a queue associated with each producer
         """
         self.queue_size_per_producer = queue_size_per_producer
-        self.producers = deque()
-        self.consumers = deque()
-        self.product_producer_mapping = {}
-        self.available_products = deque()
+        self.producers = []
+        self.consumers = []
+        self.available_products = []
         self.producer_lock = Lock()
         self.consumer_lock = Lock()
         self.product_lock = Lock()
@@ -51,7 +49,7 @@ class Marketplace:
 
         with self.producer_lock:
             producer_id = len(self.producers)
-            self.producers.append(0)
+            self.producers.append([])
 
         logger.info("registered producer %d", producer_id)
         return producer_id
@@ -68,14 +66,13 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("publish %s by %d", str(product), producer_id)
 
-        if self.producers[producer_id] == self.queue_size_per_producer:
-            logger.info("publishing %s by producer %d failed", str(product), producer_id)
-            return False
-
         with self.product_lock:
-            self.producers[producer_id] += 1
-            self.product_producer_mapping[product] = producer_id
+            if len(self.producers[producer_id]) == self.queue_size_per_producer:
+                logger.info("publishing %s by producer %d failed", str(product), producer_id)
+                return False
+
             self.available_products.append(product)
+            self.producers[producer_id].append(product)
 
         logger.info("publishing %s by producer %d succeeded", str(product), producer_id)
         return True
@@ -90,7 +87,7 @@ class Marketplace:
 
         with self.consumer_lock:
             cart_id = len(self.consumers)
-            self.consumers.append(deque())
+            self.consumers.append([])
 
         logger.info("added cart %d", cart_id)
         return cart_id
@@ -132,7 +129,10 @@ class Marketplace:
 
         if product in self.consumers[cart_id]:
             self.consumers[cart_id].remove(product)
-            self.available_products.append(product)
+
+            with self.product_lock:
+                self.available_products.append(product)
+
             logger.info("removing %s from cart %d succeeded", str(product), cart_id)
         else:
             logger.info("removing %s from cart %d failed", str(product), cart_id)
@@ -146,9 +146,12 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("place order from cart %d", cart_id)
 
-        with self.product_lock:
-            for product in self.consumers[cart_id]:
-                self.producers[self.product_producer_mapping[product]] -= 1
+        for product in self.consumers[cart_id]:
+            with self.product_lock:
+                for id_producer in range(len(self.producers)):
+                    if product in self.producers[id_producer]:
+                        self.producers[id_producer].remove(product)
+
                 print(currentThread().getName() + " bought " + str(product))
 
         logger.info("cart %d placed an order", cart_id)
