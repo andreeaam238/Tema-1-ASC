@@ -46,11 +46,12 @@ class Consumer(Thread):
                 quantity = operation['quantity']
                 product = operation['product']
 
-                for _ in range(quantity):
-                    if operation_type == 'add':
+                if operation_type == 'add':
+                    for _ in range(quantity):
                         while not self.marketplace.add_to_cart(cart_id, product):
                             time.sleep(self.retry_wait_time)
-                    elif operation_type == 'remove':
+                elif operation_type == 'remove':
+                    for _ in range(quantity):
                         self.marketplace.remove_from_cart(cart_id, product)
 
             self.marketplace.place_order(cart_id)
