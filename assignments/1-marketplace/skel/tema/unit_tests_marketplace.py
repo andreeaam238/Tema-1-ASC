@@ -34,6 +34,7 @@ class TestMarketplaceMethods(unittest.TestCase):
     def test_remove_from_cart(self):
         self.assertEqual(self.marketplace.remove_from_cart(self.cart, ('Raspberry Tea', 1, 0.05)), None)
         self.assertEqual(self.marketplace.remove_from_cart(self.cart, ('Lime Tea', 3, 0.1)), None)
+        self.assertListEqual(list(self.marketplace.place_order(self.cart)), [], True)
 
     def test_place_order(self):
         self.assertListEqual(list(self.marketplace.place_order(self.cart)), [('Raspberry Tea', 1, 0.05)])
