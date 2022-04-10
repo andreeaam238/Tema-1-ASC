@@ -31,7 +31,6 @@ class Marketplace:
         self.producer_lock = Lock()
         self.consumer_lock = Lock()
         self.product_lock = Lock()
-        self.produce_lock = Lock()
 
         logger = logging.getLogger()
         logger.setLevel(logging.INFO)
@@ -73,7 +72,7 @@ class Marketplace:
             logger.info("publishing %s by producer %d failed", str(product), producer_id)
             return False
 
-        with self.produce_lock:
+        with self.product_lock:
             self.producers[producer_id] += 1
             self.product_producer_mapping[product] = producer_id
             self.available_products.append(product)
@@ -108,7 +107,7 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("add to cart %d %s", cart_id, str(product))
 
-        with self.produce_lock:
+        with self.product_lock:
             if product not in self.available_products:
                 logger.info("adding %s to cart %d failed", str(product), cart_id)
                 return False
@@ -147,7 +146,7 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("place order from cart %d", cart_id)
 
-        with self.produce_lock:
+        with self.product_lock:
             for product in self.consumers[cart_id]:
                 self.producers[self.product_producer_mapping[product]] -= 1
                 print(currentThread().getName() + " bought " + str(product))
