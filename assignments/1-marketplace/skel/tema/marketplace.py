@@ -10,7 +10,7 @@ import unittest
 from logging.handlers import RotatingFileHandler
 from threading import Lock, currentThread
 
-import product as product_module
+import tema.product as product_module
 
 
 class Marketplace:
