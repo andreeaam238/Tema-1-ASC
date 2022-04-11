@@ -14,12 +14,15 @@ class TestMarketplaceMethods(unittest.TestCase):
         """
         self.marketplace = marketplace.Marketplace(3)
 
+        # Add a producer and a consumer
         self.producer = self.marketplace.register_producer()
         self.cart = self.marketplace.new_cart()
 
+        # Add two products (The marketplace has a limit of 3 products per producer)
         self.marketplace.publish(self.producer, ('Raspberry Tea', 1, 0.05))
         self.marketplace.publish(self.producer, ('Mint Tea', 2, 0.12))
 
+        # Add a product to the test consumer's cart
         self.marketplace.add_to_cart(self.cart, ('Raspberry Tea', 1, 0.05))
 
     def test_register_producer(self):
@@ -48,16 +51,19 @@ class TestMarketplaceMethods(unittest.TestCase):
         Test the adding of a product from the Marketplace to a cart.
         """
         self.assertEqual(self.marketplace.add_to_cart(self.cart, ('Mint Tea', 2, 0.12)), True)
+
+        # Trying to add a product that doesn't exist on the market
         self.assertEqual(self.marketplace.add_to_cart(self.cart, ('Camomile Tea', 4, 0.16)), False)
 
     def test_remove_from_cart(self):
         """
-        Test the removing of a product a cart.
+        Test the removing of a product from a cart.
         """
         self.assertEqual(self.marketplace.remove_from_cart(self.cart,
                                                            ('Raspberry Tea', 1, 0.05)), None)
         self.assertListEqual(self.marketplace.place_order(self.cart), [], True)
 
+        # Trying to remove a product that doesn't exist in the customer's cart
         self.assertEqual(self.marketplace.remove_from_cart(self.cart, ('Lime Tea', 3, 0.1)), None)
         self.assertListEqual(self.marketplace.place_order(self.cart), [], True)
 
