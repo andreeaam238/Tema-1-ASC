@@ -81,8 +81,8 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("publish %s by %d", str(product), producer_id)
 
-        # Using lock to avoid a race condition in case one consumer is trying to acquire a product from a producer's
-        # array while he is trying to produce some other product
+        # Using lock to avoid a race condition in case one consumer is trying to acquire a product
+        # from a producer's array while he is trying to produce some other product
         with self.product_lock:
             # If the producer's array is full then he can't produce anymore and has to wait
             if len(self.producers[producer_id]) == self.queue_size_per_producer:
@@ -125,11 +125,11 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("add to cart %d %s", cart_id, str(product))
 
-        # Using lock to avoid a race condition in case one consumer is trying to acquire a product from a producer's
-        # array while he is trying to produce some other product
+        # Using lock to avoid a race condition in case one consumer is trying to acquire a product
+        # from a producer's array while he is trying to produce some other product
         with self.product_lock:
-            # If the product isn't available at the moment in the marketplace the consumer has to wait and try again
-            # later
+            # If the product isn't available at the moment in the marketplace the consumer has to
+            # wait and try again later
             if product not in self.available_products:
                 logger.info("adding %s to cart %d failed", str(product), cart_id)
                 return False
@@ -175,11 +175,12 @@ class Marketplace:
         logger = logging.getLogger()
         logger.info("place order from cart %d", cart_id)
 
-        # Remove each product that the customer is buying from the producer's array in order for him to produce other
-        # products
+        # Remove each product that the customer is buying from the producer's array in order for
+        # him to produce other products
         for product in self.consumers[cart_id]:
             with self.product_lock:
-                # Find which producer has the product the customer wants in its stock, then remove it
+                # Find which producer has the product the customer wants in its stock, then remove
+                # it
                 for id_producer in range(len(self.producers)):
                     if product in self.producers[id_producer]:
                         self.producers[id_producer].remove(product)

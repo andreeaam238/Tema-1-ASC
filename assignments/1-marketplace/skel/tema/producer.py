@@ -41,16 +41,18 @@ class Producer(Thread):
         self.producer_id = self.marketplace.register_producer()
 
     def run(self):
-        # Cycle through the products that the producer is able to produce and try to add them to the marketplace
+        # Cycle through the products that the producer is able to produce and try to add them to
+        # the marketplace
         while True:
             for product in self.products:
                 quantity = product[1]
 
                 for _ in range(quantity):
-                    # If the producer's array is full then he has to wait until he tries to republish it
+                    # If the producer's array is full then he has to wait until he tries to
+                    # republish it
                     while not self.marketplace.publish(self.producer_id, product[0]):
                         time.sleep(self.republish_wait_time)
 
-                    # The product has been added to the marketplace and the producer has to wait until he can produce a
-                    # new product
+                    # The product has been added to the marketplace and the producer has to wait
+                    # until he can produce a new product
                     time.sleep(product[2])

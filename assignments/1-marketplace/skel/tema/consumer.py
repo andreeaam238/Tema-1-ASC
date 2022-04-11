@@ -52,7 +52,8 @@ class Consumer(Thread):
                 # Add or remove a quantity of product to/from the cart
                 if operation_type == 'add':
                     for _ in range(quantity):
-                        # Try again later if the operation failed (the product is not available on the market)
+                        # Try again later if the operation failed (the product is not available on
+                        # the market)
                         while not self.marketplace.add_to_cart(cart_id, product):
                             time.sleep(self.retry_wait_time)
                 elif operation_type == 'remove':
