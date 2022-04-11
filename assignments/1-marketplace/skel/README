@@ -1,1 +1,44 @@
 Blaga Ana-Maria-Andreea, 334CB
+
+1. Organizare
+    Am ales sa folosesc cate o lista pentru fiecare producator/consumator pe care le stochez intr-o
+    lista a marketplaceului de producatori/consumatori si o lista de produse disponibile pentru
+    a fi adaugate in cos.
+
+    In implementarea mea initiala nu tineam cont de faptul ca un producator poate produce un anumit
+    produs dupa ce un consumator a adaugat un produs din lista acestuia in cosul sau de cumparatori
+    (il eliminam din lista producatorului si il adaugam in cea a consumatorului), iar in
+    eventualitatea in care clientul ar dori sa scoata produsul respectiv din cos s-ar produce
+    incalcarea regulii de lungime maxima a listei unui producator.
+
+    O alta problema intampinata a fost generata de faptul ca nu am luat in considerare ca mai multi
+    producatori pot produce acelasi produs, iar implementarea mea cu dictionar in care tineam
+    maparea Produs -> Producator genera undefined behavior.
+
+    Solutia pentru problemele mele a fost sa tin si o lista a produselor disponibile in market pe
+    care sa operez atunci cand clientul dorea sa adauge/sa renunte (la) un produs in/din cosul sau,
+    iar in lista producatorului sa operez doar atunci cand se adauga produsul in market (cat si in
+    lista de produse disponibile) si atunci cand clientul plasa comanda.
+
+    Am incercat sa rezolv race condition-urile prin lock-uri oriunde am crezut eu ca s-ar putea
+    produce acestea.
+
+    Tema a fost utila pentru ca am inteles mai bine conceptul de multithreading in Python. Mi s-a
+    parut mai programmer-friendly decat in C.
+
+    Implementarea mi se pare ok, am incercat sa o fac cat mai usor de inteles. Cred ca se putea
+    tine maparea Produs -> Producator intr-un mod mai inteligent, dar nu mai am timp.
+
+    Am incercat sa tratez toate corner case-urile posibile: stergere produs care nu exista in
+    cart-ul consumatorului.
+
+2. Implementare
+    Am implementat toate cerintele, inclusiv logging si unitTesting.
+
+    Dificultatile intampinate le-am mentionat mai sus.
+
+    Mi s-a parut interesanta partea de logging si unitTesting pentru ca nu am mai avut contact cu
+    asa ceva pana acum, mi-a placut ca am invatta ceva nou.
+
+3. Git
+    Am inclus folder-ul .git. Repo-ul este privat: https://github.com/andreeaam238/Tema-1-ASC
