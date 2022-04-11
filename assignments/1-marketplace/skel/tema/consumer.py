@@ -39,19 +39,25 @@ class Consumer(Thread):
 
     def run(self):
         for cart in self.carts:
+            # Register the cart in the marketplace
             cart_id = self.marketplace.new_cart()
 
+            # Execute the operations specified for the current cart
             for operation in cart:
+                # Extract the information for the operation
                 operation_type = operation['type']
                 quantity = operation['quantity']
                 product = operation['product']
 
+                # Add or remove a quantity of product to/from the cart
                 if operation_type == 'add':
                     for _ in range(quantity):
+                        # Try again later if the operation failed (the product is not available on the market)
                         while not self.marketplace.add_to_cart(cart_id, product):
                             time.sleep(self.retry_wait_time)
                 elif operation_type == 'remove':
                     for _ in range(quantity):
                         self.marketplace.remove_from_cart(cart_id, product)
 
+            # In the end place the order
             self.marketplace.place_order(cart_id)
