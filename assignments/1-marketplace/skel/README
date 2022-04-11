@@ -2,7 +2,7 @@ Blaga Ana-Maria-Andreea, 334CB
 
 1. Organizare
     Am ales sa folosesc cate o lista pentru fiecare producator/consumator pe care le stochez intr-o
-    lista a marketplaceului de producatori/consumatori si o lista de produse disponibile pentru
+    lista a marketplace-ului de producatori/consumatori si o lista de produse disponibile pentru
     a fi adaugate in cos.
 
     In implementarea mea initiala nu tineam cont de faptul ca un producator poate produce un anumit
@@ -29,8 +29,8 @@ Blaga Ana-Maria-Andreea, 334CB
     Implementarea mi se pare ok, am incercat sa o fac cat mai usor de inteles. Cred ca se putea
     tine maparea Produs -> Producator intr-un mod mai inteligent, dar nu mai am timp.
 
-    Am incercat sa tratez toate corner case-urile posibile: stergere produs care nu exista in
-    cart-ul consumatorului.
+    Am incercat sa tratez toate corner case-urile posibile, de exemplu stergere produs care nu
+    exista in cart-ul consumatorului.
 
 2. Implementare
     Am implementat toate cerintele, inclusiv logging si unitTesting.
@@ -38,7 +38,7 @@ Blaga Ana-Maria-Andreea, 334CB
     Dificultatile intampinate le-am mentionat mai sus.
 
     Mi s-a parut interesanta partea de logging si unitTesting pentru ca nu am mai avut contact cu
-    asa ceva pana acum, mi-a placut ca am invatta ceva nou.
+    asa ceva pana acum, mi-a placut ca am invatat ceva nou.
 
 3. Git
     Am inclus folder-ul .git. Repo-ul este privat: https://github.com/andreeaam238/Tema-1-ASC
