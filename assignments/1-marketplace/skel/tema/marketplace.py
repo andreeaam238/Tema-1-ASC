@@ -10,6 +10,8 @@ import unittest
 from logging.handlers import RotatingFileHandler
 from threading import Lock, currentThread
 
+import product
+
 
 class Marketplace:
     """
@@ -211,11 +213,13 @@ class TestMarketplace(unittest.TestCase):
         self.cart = self.marketplace.new_cart()
 
         # Add two products (The marketplace has a limit of 3 products per producer)
-        self.marketplace.publish(self.producer, ('Raspberry Tea', 1, 0.05))
-        self.marketplace.publish(self.producer, ('Mint Tea', 2, 0.12))
+        self.marketplace.publish(self.producer,
+                                 (product.Tea('Raspberry Tea', 'Fruit', 1.5), 1, 0.05))
+        self.marketplace.publish(self.producer, (product.Tea('Mint Tea', 'Herbal', 2.0), 2, 0.12))
 
         # Add a product to the test consumer's cart
-        self.marketplace.add_to_cart(self.cart, ('Raspberry Tea', 1, 0.05))
+        self.marketplace.add_to_cart(self.cart,
+                                     (product.Tea('Raspberry Tea', 'Fruit', 1.5), 1, 0.05))
 
     def test_register_producer(self):
         """
@@ -235,32 +239,42 @@ class TestMarketplace(unittest.TestCase):
         """
         Test the publishing of a product in the Marketplace.
         """
-        self.assertEqual(self.marketplace.publish(self.producer, ('Lime Tea', 3, 0.1)), True)
-        self.assertEqual(self.marketplace.publish(self.producer, ('Camomile Tea', 4, 0.16)), False)
+        self.assertEqual(self.marketplace.publish(self.producer,
+                                                  (product.Tea('Lime Tea', 'Fruit', 5.5), 3, 0.1)),
+                         True)
+        self.assertEqual(self.marketplace.publish(self.producer,
+                                                  (product.Tea('Camomile Tea', 'Herbal', 1.2), 4,
+                                                   0.16)), False)
 
     def test_add_to_cart(self):
         """
         Test the adding of a product from the Marketplace to a cart.
         """
-        self.assertEqual(self.marketplace.add_to_cart(self.cart, ('Mint Tea', 2, 0.12)), True)
+        self.assertEqual(self.marketplace.add_to_cart(self.cart, (
+        product.Tea('Mint Tea', 'Herbal', 2.0), 2, 0.12)), True)
 
         # Trying to add a product that doesn't exist on the market
-        self.assertEqual(self.marketplace.add_to_cart(self.cart, ('Camomile Tea', 4, 0.16)), False)
+        self.assertEqual(
+            self.marketplace.add_to_cart(self.cart, (product.Tea('Camomile Tea', 'Herbal', 1.2), 4,
+                                                     0.16)), False)
 
     def test_remove_from_cart(self):
         """
         Test the removing of a product from a cart.
         """
         self.assertEqual(self.marketplace.remove_from_cart(self.cart,
-                                                           ('Raspberry Tea', 1, 0.05)), None)
+                                                           (product.Tea('Raspberry Tea', 'Fruit',
+                                                                        1.5), 1, 0.05)), None)
         self.assertListEqual(self.marketplace.place_order(self.cart), [], True)
 
         # Trying to remove a product that doesn't exist in the customer's cart
-        self.assertEqual(self.marketplace.remove_from_cart(self.cart, ('Lime Tea', 3, 0.1)), None)
+        self.assertEqual(self.marketplace.remove_from_cart(self.cart, (
+        product.Tea('Lime Tea', 'Fruit', 5.5), 3, 0.1)), None)
         self.assertListEqual(self.marketplace.place_order(self.cart), [], True)
 
     def test_place_order(self):
         """
         Test placing an order.
         """
-        self.assertListEqual(self.marketplace.place_order(self.cart), [('Raspberry Tea', 1, 0.05)])
+        self.assertListEqual(self.marketplace.place_order(self.cart),
+                             [(product.Tea('Raspberry Tea', 'Fruit', 1.5), 1, 0.05)])
